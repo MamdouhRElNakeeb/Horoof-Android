@@ -1,0 +1,92 @@
+package agency.crete.horoof.view
+
+import agency.crete.horoof.R
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Build
+import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.SeekBar
+import kotlinx.android.synthetic.main.settings_activity.*
+
+class Settings : AppCompatActivity() {
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.settings_activity)
+
+        val prefs = this.getSharedPreferences("User", Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            musicSB.setProgress(prefs.getInt("music", 100), true)
+            sfxSB.setProgress(prefs.getInt("sfx", 100), true)
+
+            if (prefs.getString("lang", "en").equals("ar"))
+                langToArabic()
+            else
+                langToEnglish()
+        }
+
+        musicSB.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                // Display the current progress of SeekBar
+                editor.putInt("music", i)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // Do something
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                // Do something
+            }
+        })
+
+        sfxSB.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                // Display the current progress of SeekBar
+                editor.putInt("sfx", i)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // Do something
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                // Do something
+            }
+        })
+
+        arabicBtn.setOnClickListener {
+            langToArabic()
+
+            editor.putString("lang", "ar")
+        }
+
+        englishBtn.setOnClickListener {
+            langToEnglish()
+
+            editor.putString("lang", "en")
+        }
+
+        doneBtn.setOnClickListener{
+            editor.apply()
+            finish()
+        }
+    }
+
+    fun langToArabic(){
+        arabicBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.radio_btn_on, 0, 0, 0)
+        englishBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.radio_btn_off, 0, 0, 0)
+    }
+
+    fun langToEnglish(){
+        englishBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.radio_btn_on, 0, 0, 0)
+        arabicBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.radio_btn_off, 0, 0, 0)
+    }
+}

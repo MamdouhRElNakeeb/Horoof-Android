@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="wrap_content"
+		android:layout_height="250dp"
+		android:gravity="center">
+
+	<ImageView
+			android:id="@+id/categoryFrameIV"
+			android:src="@drawable/frame21"
+			android:background="@drawable/frame_ybg"
+			android:adjustViewBounds="true"
+			android:layout_marginBottom="10dp"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"/>
+
+	<ImageView
+			android:id="@+id/categoryBtn"
+			android:layout_width="60dp"
+			android:layout_height="wrap_content"
+			android:layout_alignBottom="@id/categoryFrameIV"
+			android:layout_alignParentBottom="true"
+			android:layout_centerHorizontal="true"
+			android:src="@drawable/next_btn"
+			android:adjustViewBounds="true"/>
+
+	<TextView
+			android:id="@+id/categoryNameTV"
+			android:layout_above="@id/categoryBtn"
+			android:gravity="center"
+			android:layout_centerHorizontal="true"
+			android:layout_marginBottom="10dp"
+			android:layout_marginStart="10dp"
+			android:layout_marginEnd="10dp"
+			android:typeface="monospace"
+			android:textColor="@color/colorPrimary"
+			android:textSize="18sp"
+			android:text="ثقافة"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+
+	<ImageView
+			android:id="@+id/categoryIV"
+			android:layout_alignTop="@id/categoryFrameIV"
+			android:layout_alignStart="@id/categoryFrameIV"
+			android:layout_alignEnd="@id/categoryFrameIV"
+			android:layout_above="@id/categoryNameTV"
+			android:layout_marginTop="60dp"
+			android:layout_marginStart="50dp"
+			android:layout_marginEnd="45dp"
+			android:layout_marginBottom="10dp"
+			android:src="@drawable/category_icn"
+			android:tint="@color/colorPrimary"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+
+
+</RelativeLayout>

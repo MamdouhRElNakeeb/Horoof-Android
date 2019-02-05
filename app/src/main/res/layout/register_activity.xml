@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+		android:background="@drawable/bg_default"
+		android:gravity="center"
+		android:orientation="vertical"
+		android:paddingStart="60dp"
+		android:paddingEnd="60dp"
+		tools:context=".view.Home">
+
+	<RelativeLayout
+			android:layout_width="wrap_content"
+			android:layout_height="90dp">
+
+		<ImageView
+				android:src="@drawable/frame_ybg"
+				android:scaleType="fitXY"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+		<EditText
+				android:id="@+id/nameET"
+				android:hint="اسم المستخدم"
+				android:gravity="center"
+				android:textSize="20sp"
+				android:typeface="monospace"
+				android:textColor="@color/colorPrimaryDark"
+				android:background="@drawable/frame1"
+				android:layout_margin="10dp"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+	</RelativeLayout>
+
+	<RelativeLayout
+			android:layout_width="wrap_content"
+			android:layout_height="90dp">
+
+		<ImageView
+				android:src="@drawable/frame_ybg"
+				android:scaleType="fitXY"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+		<EditText
+				android:id="@+id/emailET"
+				android:hint="البريد الإلكترونى"
+				android:gravity="center"
+				android:textSize="20sp"
+				android:typeface="monospace"
+				android:textColor="@color/colorPrimaryDark"
+				android:background="@drawable/frame1"
+				android:layout_margin="10dp"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+	</RelativeLayout>
+
+	<RelativeLayout
+			android:layout_width="wrap_content"
+			android:layout_height="90dp">
+
+		<ImageView
+				android:src="@drawable/frame_ybg"
+				android:scaleType="fitXY"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+		<EditText
+				android:id="@+id/passET"
+				android:hint="كلمة المرور"
+				android:gravity="center"
+				android:textSize="20sp"
+				android:typeface="monospace"
+				android:textColor="@color/colorPrimaryDark"
+				android:background="@drawable/frame1"
+				android:layout_margin="10dp"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+	</RelativeLayout>
+
+	<RelativeLayout
+			android:id="@+id/registerBtn"
+			android:layout_width="wrap_content"
+			android:layout_height="120dp">
+
+		<ImageView
+				android:src="@drawable/login_btn"
+				android:scaleType="fitXY"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+		<ImageView
+				android:src="@drawable/frame1"
+				android:layout_margin="20dp"
+				android:scaleType="fitXY"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+		<agency.crete.horoof.view.custom.TextView
+				android:text="إنشاء مستخدم"
+				android:gravity="center"
+				android:textSize="22sp"
+				android:typeface="monospace"
+				android:textColor="@android:color/white"
+				app:outlineColor="@color/colorPrimaryDark"
+				app:outlineWidth="5dp"
+				android:layout_margin="20dp"
+				android:layout_centerInParent="true"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+	</RelativeLayout>
+
+	<Button
+			android:id="@+id/hasAccountBtn"
+			android:text="لديك حساب بالفعل؟"
+			android:textColor="@android:color/white"
+			android:textSize="13sp"
+			android:typeface="monospace"
+			android:paddingEnd="20dp"
+			android:paddingStart="20dp"
+			android:background="@drawable/primarydark_bg"
+			android:layout_gravity="center"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+
+</LinearLayout>
