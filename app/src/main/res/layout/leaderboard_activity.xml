@@ -57,7 +57,7 @@
 			android:textColor="@android:color/white"
 			app:outlineColor="@color/colorPrimary"
 			app:outlineWidth="5dp"
-			android:text="أفضل النتائج"
+			android:text="@string/best_results"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"/>
 

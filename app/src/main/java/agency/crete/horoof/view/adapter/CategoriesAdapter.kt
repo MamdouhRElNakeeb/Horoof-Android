@@ -3,8 +3,7 @@ package agency.crete.horoof.view.adapter
 import agency.crete.horoof.R
 import agency.crete.horoof.helper.API
 import agency.crete.horoof.model.Category
-import agency.crete.horoof.view.ContestPlay
-import agency.crete.horoof.view.NewContest
+import agency.crete.horoof.view.ContestPlay_HoroofMethod
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
@@ -35,7 +34,7 @@ class CategoriesAdapter(val items : ArrayList<Category>, val context: Context): 
         Picasso.get().load(API.SERVER + "/" + category.img).placeholder(R.drawable.category_icn).into(p0.img)
 
         p0.itemView.setOnClickListener {
-            val intent = Intent(context, ContestPlay::class.java)
+            val intent = Intent(context, ContestPlay_HoroofMethod::class.java)
             intent.putExtra("category", category.id)
             context.startActivity(intent)
         }

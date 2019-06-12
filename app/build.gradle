@@ -19,6 +19,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -34,9 +39,14 @@ dependencies {
     // Custom
     // Networking
     implementation 'com.github.kittinunf.fuel:fuel:2.0.1'
-    implementation 'com.amitshekhar.android:android-networking:1.0.2'
+//    implementation 'com.amitshekhar.android:android-networking:1.0.2'
+//    implementation 'com.squareup.okhttp3:okhttp:4.0.0-RC1'
+//    implementation 'com.github.tinder.scarlet:scarlet:0.2.4'
+
+    implementation 'org.java-websocket:Java-WebSocket:1.4.0'
+    implementation 'com.github.NaikSoftware:StompProtocolAndroid:1.6.4'
     implementation 'com.squareup.picasso:picasso:2.71828'
 
-    implementation "com.airbnb.android:lottie:2.7.0"
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
 
 }

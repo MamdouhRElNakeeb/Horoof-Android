@@ -40,8 +40,8 @@
 
 			<ImageView
 					android:id="@+id/horoofMethodTitleIV"
-					android:layout_marginStart="70dp"
-					android:layout_marginEnd="70dp"
+					android:layout_marginStart="60dp"
+					android:layout_marginEnd="60dp"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:src="@drawable/btn_normal"
@@ -60,7 +60,7 @@
 					android:textColor="@android:color/white"
 					app:outlineColor="@color/colorPrimaryDark"
 					app:outlineWidth="5dp"
-					android:text="السؤال"
+					android:text="@string/question"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"/>
 
@@ -71,14 +71,14 @@
 					android:layout_alignEnd="@id/horoofMethodFrame"
 					android:layout_alignTop="@id/horoofMethodFrame"
 					android:layout_alignBottom="@id/horoofMethodFrame"
-					android:layout_marginTop="60dp"
-					android:layout_marginBottom="50dp"
-					android:layout_marginStart="50dp"
-					android:layout_marginEnd="50dp"
+					android:layout_marginTop="50dp"
+					android:layout_marginBottom="40dp"
+					android:layout_marginStart="40dp"
+					android:layout_marginEnd="40dp"
 					android:gravity="center"
 					android:textColor="@color/colorPrimary"
 					android:typeface="monospace"
-					android:textSize="13sp"
+					android:textSize="15sp"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"/>
 
@@ -273,14 +273,87 @@
 		</LinearLayout>
 	</LinearLayout>
 
-	<com.airbnb.lottie.LottieAnimationView
-			android:id="@+id/animationView"
+	<LinearLayout
+			android:id="@+id/resultLL"
+			android:visibility="gone"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:layout_centerInParent="true"
-			app:lottie_imageAssetsFolder="images"
-			app:lottie_fileName="happy.json"
-			app:lottie_loop="true"
-			app:lottie_autoPlay="true" />
+			android:orientation="vertical"
+			android:background="#d8f18700">
+
+		<pl.droidsonroids.gif.GifImageView
+				android:id="@+id/animation"
+				android:layout_gravity="center"
+				android:adjustViewBounds="true"
+				android:layout_marginTop="20dp"
+				android:layout_marginBottom="20dp"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="2"/>
+
+
+		<RelativeLayout
+				android:layout_width="match_parent"
+				android:gravity="top"
+				android:layout_height="0dp"
+				android:layout_weight="1">
+
+			<ImageView
+					android:id="@+id/frameY"
+					android:src="@drawable/frame12"
+					android:background="@drawable/frame_ybg"
+					android:scaleType="fitXY"
+					android:layout_marginEnd="60dp"
+					android:layout_marginStart="60dp"
+					android:layout_width="match_parent"
+					android:layout_height="150dp"/>
+
+			<LinearLayout
+					android:layout_centerHorizontal="true"
+					android:layout_alignBottom="@id/frameY"
+					android:layout_alignStart="@id/frameY"
+					android:layout_alignEnd="@id/frameY"
+					android:layout_marginBottom="-25dp"
+					android:gravity="center"
+					android:layout_width="wrap_content"
+					android:layout_height="75dp">
+
+				<ImageView
+						android:id="@+id/repeatBtn"
+						android:src="@drawable/repeat_btn"
+						android:adjustViewBounds="true"
+						android:layout_marginEnd="20dp"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"/>
+
+				<ImageView
+						android:id="@+id/nextBtn"
+						android:src="@drawable/next_btn"
+						android:adjustViewBounds="true"
+						android:layout_width="wrap_content"
+						android:layout_height="match_parent"/>
+
+			</LinearLayout>
+
+
+
+			<TextView
+					android:id="@+id/resultMsgTV"
+					android:typeface="monospace"
+					android:textSize="18sp"
+					android:textColor="@color/colorPrimaryDark"
+					android:gravity="center"
+					android:layout_alignTop="@id/frameY"
+					android:layout_alignBottom="@id/frameY"
+					android:layout_alignStart="@id/frameY"
+					android:layout_alignEnd="@id/frameY"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"/>
+
+
+		</RelativeLayout>
+
+	</LinearLayout>
+
 
 </RelativeLayout>

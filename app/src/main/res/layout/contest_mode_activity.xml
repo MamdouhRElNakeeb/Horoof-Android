@@ -19,9 +19,12 @@
 
 		<ImageView
 				android:id="@+id/horoofMethodFrame"
-				android:src="@drawable/frame_yrect"
+				android:src="@drawable/frame2"
+				android:background="@drawable/frame_ybg"
+				android:scaleType="fitXY"
 				android:adjustViewBounds="true"
 				android:layout_marginBottom="20dp"
+				android:layout_marginTop="10dp"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"/>
 
@@ -29,8 +32,11 @@
 		<ImageView
 				android:id="@+id/horoofMethodTitleIV"
 				android:layout_alignTop="@id/horoofMethodFrame"
-				android:layout_marginStart="70dp"
-				android:layout_marginEnd="70dp"
+				android:layout_alignStart="@id/horoofMethodFrame"
+				android:layout_alignEnd="@id/horoofMethodFrame"
+				android:layout_marginStart="60dp"
+				android:layout_marginEnd="60dp"
+				android:layout_marginTop="-10dp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:src="@drawable/btn_normal"
@@ -84,7 +90,6 @@
 
 
 	<RelativeLayout
-			android:alpha="0.5"
 			android:id="@+id/turnsMethodRL"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
@@ -96,17 +101,21 @@
 
 		<ImageView
 				android:id="@+id/turnsMethodFrame"
-				android:src="@drawable/frame_yrect"
+				android:src="@drawable/frame2"
+				android:background="@drawable/frame_ybg"
+				android:scaleType="fitXY"
 				android:adjustViewBounds="true"
 				android:layout_marginBottom="20dp"
+				android:layout_marginTop="10dp"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"/>
 
 		<ImageView
 				android:id="@+id/turnsMethodTitleIV"
 				android:layout_alignTop="@id/turnsMethodFrame"
-				android:layout_marginStart="70dp"
-				android:layout_marginEnd="70dp"
+				android:layout_marginStart="60dp"
+				android:layout_marginEnd="60dp"
+				android:layout_marginTop="-10dp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:src="@drawable/btn_normal"

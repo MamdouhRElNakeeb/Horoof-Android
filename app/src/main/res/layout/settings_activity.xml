@@ -34,8 +34,8 @@
 				android:background="@drawable/setting_orange_bg"
 				android:paddingStart="10dp"
 				android:paddingEnd="10dp"
-				android:paddingTop="6dp"
-				android:paddingBottom="6dp">
+				android:paddingTop="3dp"
+				android:paddingBottom="3dp">
 
 			<agency.crete.horoof.view.custom.TextView
 					android:text="@string/music"
@@ -44,16 +44,13 @@
 					android:textColor="@android:color/white"
 					app:outlineColor="@color/colorPrimaryDark"
 					app:outlineWidth="4dp"
-					android:layout_width="0dp"
-					android:layout_weight="1"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"/>
 
 			<SeekBar
 					android:id="@+id/musicSB"
-					android:layout_width="0dp"
-					android:layout_weight="3"
+					android:layout_width="match_parent"
 					android:layout_height="40dp"
-					android:layout_marginStart="10dp"
 					android:maxHeight="20dp"
 					android:max="100"
 					android:progress="100"
@@ -70,11 +67,11 @@
 				android:orientation="horizontal"
 				android:gravity="center"
 				android:background="@drawable/setting_orange_bg"
-				android:layout_marginTop="16dp"
+				android:layout_marginTop="10dp"
 				android:paddingStart="10dp"
 				android:paddingEnd="10dp"
-				android:paddingTop="6dp"
-				android:paddingBottom="6dp">
+				android:paddingTop="3dp"
+				android:paddingBottom="3dp">
 
 			<agency.crete.horoof.view.custom.TextView
 					android:text="@string/effects"
@@ -83,17 +80,14 @@
 					android:textColor="@android:color/white"
 					app:outlineColor="@color/colorPrimaryDark"
 					app:outlineWidth="4dp"
-					android:layout_width="0dp"
-					android:layout_weight="1"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"/>
 
 			<SeekBar
 					android:id="@+id/sfxSB"
-					android:layout_width="0dp"
-					android:layout_weight="3"
+					android:layout_width="match_parent"
 					android:layout_height="40dp"
 					android:maxHeight="20dp"
-					android:layout_marginStart="15dp"
 					android:max="100"
 					android:progress="20"
 					android:progressDrawable="@drawable/seekbar"
@@ -107,7 +101,7 @@
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
 				android:background="@drawable/setting_orange_bg"
-				android:layout_marginTop="16dp"
+				android:layout_marginTop="10dp"
 				android:paddingStart="10dp"
 				android:paddingEnd="10dp"
 				android:paddingTop="6dp"
@@ -146,12 +140,32 @@
 
 		</LinearLayout>
 
+		<agency.crete.horoof.view.custom.Button
+				android:id="@+id/logoutBtn"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:background="@drawable/setting_orange_bg"
+				android:text="خروج"
+				android:typeface="monospace"
+				android:gravity="center"
+				android:textAllCaps="false"
+				android:textSize="13sp"
+				android:textColor="@android:color/white"
+				app:outlineColor="@color/colorPrimaryDark"
+				app:outlineWidth="4dp"
+				android:layout_marginTop="10dp"
+				android:paddingStart="10dp"
+				android:paddingEnd="10dp"
+				android:paddingTop="10dp"
+				android:paddingBottom="10dp" />
+
 	</LinearLayout>
 
 	<ImageView
 			android:id="@+id/titleIV"
 			android:layout_alignTop="@id/frameIV"
-			android:layout_marginTop="-20dp"
+			android:layout_marginTop="-15dp"
 			android:layout_marginStart="60dp"
 			android:layout_marginEnd="60dp"
 			android:layout_width="wrap_content"
@@ -172,7 +186,7 @@
 			android:textColor="@android:color/white"
 			app:outlineColor="@color/colorPrimaryDark"
 			app:outlineWidth="5dp"
-			android:text="خيارات البرنامج"
+			android:text="@string/settings"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"/>
 

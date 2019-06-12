@@ -1,9 +1,11 @@
 package agency.crete.horoof.view
 
 import agency.crete.horoof.R
+import agency.crete.horoof.helper.LocaleManager
 import agency.crete.horoof.view.adapter.ScoresAdapter
 import agency.crete.horoof.model.Score
 import agency.crete.horoof.model.User
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -12,6 +14,10 @@ import kotlinx.android.synthetic.main.leaderboard_activity.*
 class Leaderboard : AppCompatActivity() {
 
     var scores: ArrayList<Score> = ArrayList()
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LocaleManager.setLocale(base))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

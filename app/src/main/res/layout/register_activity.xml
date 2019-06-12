@@ -28,8 +28,11 @@
 				android:textSize="20sp"
 				android:typeface="monospace"
 				android:textColor="@color/colorPrimaryDark"
+				android:inputType="textPersonName"
 				android:background="@drawable/frame1"
 				android:layout_margin="10dp"
+				android:paddingEnd="20dp"
+				android:paddingStart="20dp"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"/>
 
@@ -52,8 +55,11 @@
 				android:textSize="20sp"
 				android:typeface="monospace"
 				android:textColor="@color/colorPrimaryDark"
+				android:inputType="textEmailAddress"
 				android:background="@drawable/frame1"
 				android:layout_margin="10dp"
+				android:paddingEnd="20dp"
+				android:paddingStart="20dp"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"/>
 
@@ -76,8 +82,11 @@
 				android:textSize="20sp"
 				android:typeface="monospace"
 				android:textColor="@color/colorPrimaryDark"
+				android:inputType="textPassword"
 				android:background="@drawable/frame1"
 				android:layout_margin="10dp"
+				android:paddingEnd="20dp"
+				android:paddingStart="20dp"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"/>
 

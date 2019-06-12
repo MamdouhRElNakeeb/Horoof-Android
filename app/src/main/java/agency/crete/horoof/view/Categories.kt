@@ -3,21 +3,19 @@ package agency.crete.horoof.view
 import agency.crete.horoof.view.adapter.CategoriesAdapter
 import agency.crete.horoof.R
 import agency.crete.horoof.helper.API
+import agency.crete.horoof.helper.LocaleManager
 import agency.crete.horoof.model.Category
 import android.content.Context
-import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.widget.Toast
 import com.github.kittinunf.fuel.core.extensions.authentication
-import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.fuel.httpGet
-import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import kotlinx.android.synthetic.main.categories_activity.*
-import kotlinx.android.synthetic.main.login_activity.*
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -26,6 +24,10 @@ class Categories : AppCompatActivity() {
     var items: ArrayList<Category> = ArrayList()
 
     var page = 0
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LocaleManager.setLocale(base))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +54,7 @@ class Categories : AppCompatActivity() {
     fun getCategories() {
 
         val token = getSharedPreferences("User", Context.MODE_PRIVATE).getString("token", "")
+        Log.d("token", token)
 
         API.CATEGORIES
             .httpGet(listOf("page" to page, "offset" to 10))

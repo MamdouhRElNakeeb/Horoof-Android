@@ -9,24 +9,53 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.widget.Toast
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.extensions.authentication
+import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.result.Result
-import kotlinx.android.synthetic.main.contest_play_activity.*
-import org.json.JSONArray
 import org.json.JSONObject
 import pl.droidsonroids.gif.GifDrawable
-import java.util.*
+import java.util.ArrayList
+import ua.naiksoftware.stomp.StompClient
+import ua.naiksoftware.stomp.dto.LifecycleEvent
+import java.util.concurrent.TimeUnit
+import io.reactivex.disposables.CompositeDisposable
+import okio.ByteString
+import android.view.View
+import okhttp3.*
+import okhttp3.OkHttpClient
+import android.os.Build
+import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.contest_play_activity.*
+import org.java_websocket.handshake.ServerHandshake
+import org.java_websocket.client.WebSocketClient
+import ua.naiksoftware.stomp.Stomp
+import java.net.URI
+import java.net.URISyntaxException
 
-class ContestPlay_HoroofMethod: AppCompatActivity() {
+
+class ContestPlay_TurnsMethod: AppCompatActivity() {
+
+    lateinit var stompConnection: Disposable
+    lateinit var topic: Disposable
+    val intervalMillis = 1000L
+    val client = OkHttpClient()
+
+//    val stomp = StompClient(Stomp.ConnectionProvider.OKHTTP, API.TRACKER)
+
+    private var mWebSocketClient: WebSocketClient? = null
+
+    private var okHttpClient: OkHttpClient? = null
+
+    private var stompClient: StompClient? = null
+    private val compositeDisposable: CompositeDisposable? = null
 
     var items: ArrayList<Question> = ArrayList()
 
     private var gifDrawable: GifDrawable? = null
 
+    var compID = 0
     var categoryID = 0
     var questionIndex = 0
 
@@ -42,64 +71,22 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.contest_play_activity)
 
-        if (intent.hasExtra("category"))
-            categoryID = intent.getIntExtra("category", 0)
+        val token = getSharedPreferences("User", Context.MODE_PRIVATE).getString("token", "")
+        Log.d("token", token)
 
-        if (categoryID == 0)
-            finish()
-
-        getQuestions()
-
-        answer1Btn.setOnClickListener {
-            evaluateAnswers(1)
-        }
-
-        answer2Btn.setOnClickListener {
-            evaluateAnswers(2)
-        }
-
-        answer3Btn.setOnClickListener {
-            evaluateAnswers(3)
-        }
-
-        answer4Btn.setOnClickListener {
-            evaluateAnswers(4)
-        }
-
-        nextBtn.setOnClickListener {
-            if (questionIndex != items.size - 1) {
-                resultLL.visibility = GONE
-                questionIndex++
-                changeQuestion(questionIndex)
-            }
-            else {
-                if (repeatBtn.isEnabled){
-                    resultMsgTV.text = "${resources.getString(R.string.score)}: $score / ${items.size}"
-                    repeatBtn.isEnabled = false
-                    repeatBtn.alpha = 0.5F
-                    showGIF(R.raw.done)
-                    Log.d("Score", score.toString())
-                }
-                else {
-                    finish()
-                }
-
-            }
-        }
-
-        repeatBtn.setOnClickListener {
-            resultLL.visibility = GONE
-            changeQuestion(questionIndex)
-        }
+        Log.d("sockUrl", "${API.TRACKER}?access_token=$token")
+        stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "${API.TRACKER}?access_token=$token")
+        joinCompetition()
     }
 
-    private fun getQuestions(){
+    private fun joinCompetition() {
 
         val token = getSharedPreferences("User", Context.MODE_PRIVATE).getString("token", "")
 
-        Fuel.get("${API.CATEGORY}/$categoryID/questions", listOf("page" to page, "offset" to 10))
+        Fuel.post(API.COMPETITIONS)
             .authentication()
-            .bearer(token)
+            .bearer(token!!)
+            .jsonBody("{}")
             .responseString{ request, response, result ->
 
                 print("resp: $response")
@@ -107,13 +94,22 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
                 when(result){
                     is Result.Success -> {
 
-                        val resp = JSONArray(result.get())
+                        val resp = JSONObject(result.get())
 
-                        print("resp: $resp")
+                        print("resp: ${result.get()}")
 
-                        for (i in 0..(resp.length() - 1)){
+                        if (resp.getString("status").equals("STARTED") || resp.getString("status").equals("RUNNING")) {
 
-                            val obj = resp.getJSONObject(i)
+                            compID = resp.getInt("id")
+                            Log.d("compID", compID.toString())
+                            subscribeToCompetition(compID)
+                        }
+
+                        val questions = resp.getJSONArray("questions")
+
+                        for (i in 0..(questions.length() - 1)){
+
+                            val obj = questions.getJSONObject(i).getJSONObject("question")
 
                             val answersObj = obj.getJSONArray("answers")
                             val list: ArrayList<Answer> = ArrayList()
@@ -129,13 +125,7 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
                                     list
                                 )
                             )
-
                         }
-
-                        runOnUiThread {
-                            changeQuestion(questionIndex)
-                        }
-
                     }
 
                     is Result.Failure -> {
@@ -146,10 +136,87 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
                             404 -> Toast.makeText(this, "An error occurred, Try again later!", Toast.LENGTH_SHORT).show()
                         }
 
-                        print("err: $err")
+//                        print("errrr: $err")
                     }
                 }
             }
+    }
+
+    private fun subscribeToCompetition(compId: Int) {
+
+        stompClient!!.withClientHeartbeat(1000).withServerHeartbeat(1000)
+
+        val dispLifecycle = stompClient!!.lifecycle()
+            .subscribe {
+                lifecycle ->
+
+                when(lifecycle.type){
+                    LifecycleEvent.Type.OPENED ->
+                        Log.d("stompLifeCycle", "opened")
+
+                    LifecycleEvent.Type.ERROR ->
+                        Log.d("stompLifeCycle", lifecycle.exception.toString())
+
+                    LifecycleEvent.Type.CLOSED ->
+                        Log.d("stompLifeCycle", "closed")
+
+                    LifecycleEvent.Type.FAILED_SERVER_HEARTBEAT ->
+                        Log.d("stompLifeCycle", "failed")
+
+                }
+            }
+//
+        compositeDisposable!!.add(dispLifecycle)
+//
+//        val dispTopic = stompClient!!.topic("/topic/competition/$compId/questions")
+//            .subscribeOn(Schedulers.io())
+////            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe({
+//                    topicMessage ->
+//                Log.d("Subscription", "Received " + topicMessage.payload)
+////                addItem(mGson.fromJson(topicMessage.getPayload(), EchoModel::class.java))
+//
+//            }, {
+//                    throwable -> Log.e("Subscription", "Error on subscribe topic", throwable)
+//            })
+//
+//        compositeDisposable.add(dispTopic)
+
+
+        stompClient!!.connect()
+
+        stompClient!!.send("/topic/competition/$compId/subscription")
+            .subscribe(
+                {
+                    Log.d("Quesss", "send to subscription")
+                },
+                {
+                        throwable -> Log.e("Subscription", "Error on subscribe topic", throwable)
+                }
+            )
+
+        stompClient!!.send("/topic/competition/$compId/next")
+            .subscribe(
+                {
+                        Log.d("Quesss", "send to next")
+                },
+                {
+                        throwable -> Log.e("Subscription", "Error on subscribe topic", throwable)
+                }
+            )
+
+//        stompClient!!.topic("/topic/competition/$compId/questions")
+//            .subscribe (
+//                {
+//                    topicMessage -> Log.d("Quesss", topicMessage.payload)
+//                }
+//            ,
+//                {
+//                        throwable -> Log.e("Subscription", "Error on subscribe topic", throwable)
+//                }
+//            )
+
+//        mStompClient.send("/topic/hello-msg-mapping", "My first STOMP message!").subscribe()
     }
 
     private fun changeQuestion(index: Int){
@@ -162,6 +229,7 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
 
         resetAnswers()
     }
+
 
     private fun evaluateAnswers(choosenAnswer: Int) {
 
@@ -178,11 +246,11 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
                 if (!items[questionIndex].answers[0].status) {
                     answer1Bg.setImageResource(R.drawable.frame_rbg)
                     resultMsgTV.setText(R.string.wrong_answer)
-                    showGIF(R.raw.wrong)
+//                    showGIF(R.raw.wrong)
                 }
                 else{
                     resultMsgTV.setText(R.string.correct_answer)
-                    showGIF(R.raw.correct)
+//                    showGIF(R.raw.correct)
                     score++
                 }
 
@@ -193,11 +261,11 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
                 if (!items[questionIndex].answers[1].status){
                     answer2Bg.setImageResource(R.drawable.frame_rbg)
                     resultMsgTV.setText(R.string.wrong_answer)
-                    showGIF(R.raw.wrong)
+//                    showGIF(R.raw.wrong)
                 }
                 else{
                     resultMsgTV.setText(R.string.correct_answer)
-                    showGIF(R.raw.correct)
+//                    showGIF(R.raw.correct)
                     score++
                 }
 
@@ -208,11 +276,11 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
                 if (!items[questionIndex].answers[2].status){
                     answer3Bg.setImageResource(R.drawable.frame_rbg)
                     resultMsgTV.setText(R.string.wrong_answer)
-                    showGIF(R.raw.wrong)
+//                    showGIF(R.raw.wrong)
                 }
                 else{
                     resultMsgTV.setText(R.string.correct_answer)
-                    showGIF(R.raw.correct)
+//                    showGIF(R.raw.correct)
                     score++
                 }
 
@@ -223,11 +291,11 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
                 if (!items[questionIndex].answers[3].status){
                     answer4Bg.setImageResource(R.drawable.frame_rbg)
                     resultMsgTV.setText(R.string.wrong_answer)
-                    showGIF(R.raw.wrong)
+//                    showGIF(R.raw.wrong)
                 }
                 else{
                     resultMsgTV.setText(R.string.correct_answer)
-                    showGIF(R.raw.correct)
+//                    showGIF(R.raw.correct)
                     score++
                 }
 
@@ -238,7 +306,7 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
 
     }
 
-    fun resetAnswers(){
+    private fun resetAnswers(){
         answer1Bg.setImageResource(R.drawable.frame_ybg)
         answer2Bg.setImageResource(R.drawable.frame_ybg)
         answer3Bg.setImageResource(R.drawable.frame_ybg)
@@ -248,12 +316,6 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
         answer2Icn.setImageResource(R.drawable.radio_btn_off)
         answer3Icn.setImageResource(R.drawable.radio_btn_off)
         answer4Icn.setImageResource(R.drawable.radio_btn_off)
-    }
-
-    fun showGIF(gif: Int){
-        resultLL.visibility = VISIBLE
-        gifDrawable = GifDrawable(resources, gif)
-        animation.setImageDrawable(gifDrawable)
     }
 
 }

@@ -15,6 +15,7 @@
 		    android:supportsRtl="true"
 		    android:usesCleartextTraffic="true"
 		    android:theme="@style/AppTheme"
+		    android:networkSecurityConfig="@xml/network_security_config"
 		    tools:ignore="GoogleAppIndexingWarning">
 
         <activity android:name=".view.Splash">
@@ -32,8 +33,8 @@
 	    <activity android:name=".view.Categories"/>
 	    <activity android:name=".view.Login"/>
 	    <activity android:name=".view.Register"/>
+	    <activity android:name=".view.ContestPlay_TurnsMethod"/>
 	    <activity android:name=".view.ContestPlay_HoroofMethod"/>
-	    <activity android:name=".view.ContestPlay"/>
 
     </application>
 

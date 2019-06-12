@@ -1,8 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
 	<string name="app_name">حروف</string>
+
+	<string name="new_comp">مسابقة جديدة</string>
+
+	<string name="question">السؤال</string>
+	<string name="correct_answer">إجابة صحيحة</string>
+	<string name="wrong_answer">إجابة خاطئة</string>
+	<string name="competition_done">المسابقة إنتهت</string>
+	<string name="score">النتيجة</string>
+
+
+	<string name="open_comp">فتح مسابقة</string>
+	<string name="best_results">أفضل النتائج</string>
+
+
+	<string name="settings">خيارات البرنامج</string>
+
 	<string name="music">الموسيقى</string>
 	<string name="effects">المؤثرات</string>
+
+	<string name="help">مساعدة</string>
+
+	<string name="play_rules">طريقة اللعب</string>
 
 </resources>

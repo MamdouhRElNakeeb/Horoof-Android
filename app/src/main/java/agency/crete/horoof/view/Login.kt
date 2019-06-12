@@ -8,10 +8,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import com.androidnetworking.AndroidNetworking
-import com.androidnetworking.error.ANError
-import com.androidnetworking.interfaces.JSONObjectRequestListener
-import com.github.kittinunf.fuel.core.Parameters
 import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
@@ -40,7 +36,7 @@ class Login: AppCompatActivity() {
         val pass = passET.text.toString().trim()
 
         val body = JSONObject()
-        body.put("email", email)
+        body.put("username", email)
         body.put("password", pass)
 
         API.LOGIN
@@ -48,19 +44,18 @@ class Login: AppCompatActivity() {
             .jsonBody(body.toString())
             .responseString{ request, response, result ->
 
-                print("resp: " + response)
+                println("loginResp $response")
+                val respBody = response.body().asString("application/json")
+                println(respBody)
 
-                when(result){
-                    is Result.Success -> {
-
-                        val resp = JSONObject(result.get())
-
-                        print("result: " + resp)
-
+                when(response.statusCode) {
+                    200 -> {
+                        // Login is successful
                         val prefs = this.getSharedPreferences("User", Context.MODE_PRIVATE)
                         val editor = prefs.edit()
 
-                        editor.putString("token", resp.getString("token"))
+                        val resp = JSONObject(respBody)
+                        editor.putString("token", resp.getString("id_token"))
                         editor.putString("email", email)
                         editor.putBoolean("login", true)
                         editor.apply()
@@ -68,16 +63,14 @@ class Login: AppCompatActivity() {
                         startActivity(Intent(this@Login, Home::class.java))
                         finish()
                     }
+                    400, 401, 403 -> {
+                        val err =  JSONObject(respBody).getString("title")
+                        println("errrrr $err")
+                        Toast.makeText(this@Login, err, Toast.LENGTH_SHORT).show()
 
-                    is Result.Failure -> {
-                        val err = result.getException()
-
-                        when(response.statusCode){
-                            401, 403 -> Toast.makeText(this, JSONObject(result.get()).getString("message"), Toast.LENGTH_SHORT).show()
-                            404 -> Toast.makeText(this, "An error occurred, Try again later!", Toast.LENGTH_SHORT).show()
-                        }
-
-                        print("err: " + err)
+                    }
+                    404 -> {
+                        Toast.makeText(this@Login, "An error occurred, Try again later!", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

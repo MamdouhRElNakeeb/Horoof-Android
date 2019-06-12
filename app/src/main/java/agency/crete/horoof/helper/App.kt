@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Typeface
 import android.os.Environment
 import android.util.Log
-import com.androidnetworking.AndroidNetworking
 
 import java.io.File
 
@@ -13,10 +12,13 @@ import android.provider.ContactsContract.Directory.PACKAGE_NAME
 
 class App : Application() {
 
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LocaleManager.setLocale(base))
+    }
+
     override fun onCreate() {
         super.onCreate()
-
-        AndroidNetworking.initialize(applicationContext)
 
         setDefaultFont(this, "MONOSPACE", "GE_SS_Two_Bold.otf")
     }
@@ -37,7 +39,7 @@ class App : Application() {
         return folder.path.toString()
     }
 
-    fun createFolder(): String {
+    private fun createFolder(): String {
 
         val extStorageDirectory = Environment
             .getExternalStorageDirectory().toString()
@@ -51,7 +53,7 @@ class App : Application() {
         return folder.path.toString()
     }
 
-    fun checkExist(filePath: String): Boolean {
+    private fun checkExist(filePath: String): Boolean {
 
         val file = File(filePath)
 

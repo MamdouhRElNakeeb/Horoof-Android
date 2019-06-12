@@ -16,8 +16,8 @@
             android:src="@drawable/logo"
             android:adjustViewBounds="true"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="55dp"
-            android:layout_marginStart="30dp"/>
+            android:layout_marginRight="55dp"
+            android:layout_marginLeft="30dp"/>
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -27,33 +27,78 @@
             android:layout_marginTop="-30dp"
             android:orientation="vertical">
 
-        <Button
+        <agency.crete.horoof.view.custom.Button
                 android:id="@+id/newCompBtn"
+                android:text="@string/new_comp"
+                android:typeface="monospace"
+                android:textSize="23sp"
+                android:textColor="@android:color/white"
+                app:outlineColor="@color/colorPrimaryDark"
+                app:outlineWidth="5dp"
+                android:gravity="top|center"
+                android:paddingTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/btn_height"
-                android:background="@drawable/btn_new_comp"/>
-        <Button
+                android:background="@drawable/btn_default"/>
+
+        <agency.crete.horoof.view.custom.Button
                 android:alpha="0.5"
                 android:enabled="false"
                 android:id="@+id/openCompBtn"
+                android:text="@string/open_comp"
+                android:typeface="monospace"
+                android:textSize="23sp"
+                android:textColor="@android:color/white"
+                app:outlineColor="@color/colorPrimaryDark"
+                app:outlineWidth="5dp"
+                android:gravity="top|center"
+                android:paddingTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/btn_height"
-                android:background="@drawable/btn_open_comp"/>
-        <Button
+                android:background="@drawable/btn_default"/>
+
+        <agency.crete.horoof.view.custom.Button
                 android:id="@+id/bestResultsBtn"
+                android:text="@string/best_results"
+                android:typeface="monospace"
+                android:textSize="23sp"
+                android:textColor="@android:color/white"
+                app:outlineColor="@color/colorPrimaryDark"
+                app:outlineWidth="5dp"
+                android:gravity="top|center"
+                android:paddingTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/btn_height"
-                android:background="@drawable/btn_best_results"/>
-        <Button
+                android:background="@drawable/btn_default"/>
+
+        <agency.crete.horoof.view.custom.Button
                 android:id="@+id/settingsBtn"
+                android:text="@string/settings"
+                android:typeface="monospace"
+                android:textSize="23sp"
+                android:textColor="@android:color/white"
+                app:outlineColor="@color/colorPrimaryDark"
+                app:outlineWidth="5dp"
+                android:gravity="top|center"
+                android:paddingTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/btn_height"
-                android:background="@drawable/btn_settings"/>
-        <Button
+                android:background="@drawable/btn_default"/>
+
+        <agency.crete.horoof.view.custom.Button
                 android:id="@+id/helpBtn"
+                android:text="@string/help"
+                android:typeface="monospace"
+                android:textSize="23sp"
+                android:textColor="@android:color/white"
+                app:outlineColor="@color/colorPrimaryDark"
+                app:outlineWidth="5dp"
+                android:gravity="top|center"
+                android:paddingTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/btn_height"
-                android:background="@drawable/btn_help"/>
+                android:background="@drawable/btn_default"/>
+
 
     </LinearLayout>
 
