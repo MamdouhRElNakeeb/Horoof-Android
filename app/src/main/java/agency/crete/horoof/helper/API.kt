@@ -16,6 +16,7 @@ open class API {
         const val CATEGORY = "$API/category"
         const val QUESTIONS = "$API/questions"
         const val COMPETITIONS = "$API/competitions"
+        const val COMPETITION_SUBSCRIPTION = "$API/topic/competition"
 
 
         const val TRACKER = "$WS/websocket/tracker/websocket"

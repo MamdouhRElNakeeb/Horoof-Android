@@ -19,34 +19,16 @@ import pl.droidsonroids.gif.GifDrawable
 import java.util.ArrayList
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
-import java.util.concurrent.TimeUnit
 import io.reactivex.disposables.CompositeDisposable
-import okio.ByteString
-import android.view.View
-import okhttp3.*
 import okhttp3.OkHttpClient
-import android.os.Build
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.contest_play_activity.*
-import org.java_websocket.handshake.ServerHandshake
 import org.java_websocket.client.WebSocketClient
 import ua.naiksoftware.stomp.Stomp
-import java.net.URI
-import java.net.URISyntaxException
 
 
 class ContestPlay_TurnsMethod: AppCompatActivity() {
-
-    lateinit var stompConnection: Disposable
-    lateinit var topic: Disposable
-    val intervalMillis = 1000L
-    val client = OkHttpClient()
-
-//    val stomp = StompClient(Stomp.ConnectionProvider.OKHTTP, API.TRACKER)
-
-    private var mWebSocketClient: WebSocketClient? = null
-
-    private var okHttpClient: OkHttpClient? = null
 
     private var stompClient: StompClient? = null
     private val compositeDisposable: CompositeDisposable? = null
@@ -102,6 +84,7 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
 
                             compID = resp.getInt("id")
                             Log.d("compID", compID.toString())
+
                             subscribeToCompetition(compID)
                         }
 
@@ -168,22 +151,19 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
 //
         compositeDisposable!!.add(dispLifecycle)
 //
-//        val dispTopic = stompClient!!.topic("/topic/competition/$compId/questions")
-//            .subscribeOn(Schedulers.io())
-////            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe({
-//                    topicMessage ->
-//                Log.d("Subscription", "Received " + topicMessage.payload)
-////                addItem(mGson.fromJson(topicMessage.getPayload(), EchoModel::class.java))
-//
-//            }, {
-//                    throwable -> Log.e("Subscription", "Error on subscribe topic", throwable)
-//            })
-//
-//        compositeDisposable.add(dispTopic)
+        val dispTopic = stompClient!!.topic("/topic/competition/$compId/next")
+            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                    topicMessage ->
+                Log.d("Subscription", "Received " + topicMessage.payload)
+//                addItem(mGson.fromJson(topicMessage.getPayload(), EchoModel::class.java))
 
+            }, {
+                    throwable -> Log.e("Subscription", "Error on subscribe topic", throwable)
+            })
 
-        stompClient!!.connect()
+        compositeDisposable.add(dispTopic)
 
         stompClient!!.send("/topic/competition/$compId/subscription")
             .subscribe(
@@ -195,15 +175,8 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
                 }
             )
 
-        stompClient!!.send("/topic/competition/$compId/next")
-            .subscribe(
-                {
-                        Log.d("Quesss", "send to next")
-                },
-                {
-                        throwable -> Log.e("Subscription", "Error on subscribe topic", throwable)
-                }
-            )
+
+        stompClient!!.connect()
 
 //        stompClient!!.topic("/topic/competition/$compId/questions")
 //            .subscribe (
@@ -231,7 +204,10 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
     }
 
 
-    private fun evaluateAnswers(choosenAnswer: Int) {
+    private fun evaluateAnswers(chosenAnswer: Int) {
+
+        stompClient!!.send("/topic/competition/${compID}/question/${items.get(questionIndex).id}",
+            "{id: ${items.get(questionIndex).answers.get(chosenAnswer).content}}")
 
         when {
             items[questionIndex].answers[0].status -> answer1Bg.setImageResource(R.drawable.frame_gbg)
@@ -240,7 +216,7 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
             items[questionIndex].answers[3].status -> answer4Bg.setImageResource(R.drawable.frame_gbg)
         }
 
-        when(choosenAnswer){
+        when(chosenAnswer){
 
             1 -> {
                 if (!items[questionIndex].answers[0].status) {
