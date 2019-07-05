@@ -117,10 +117,34 @@ class ContestPlay_HoroofMethod: AppCompatActivity() {
 
                             val answersObj = obj.getJSONArray("answers")
                             val list: ArrayList<Answer> = ArrayList()
-                            list.add(Answer(answersObj.getJSONObject(0).getString("answer"), answersObj.getJSONObject(0).getBoolean("correct")))
-                            list.add(Answer(answersObj.getJSONObject(1).getString("answer"), answersObj.getJSONObject(1).getBoolean("correct")))
-                            list.add(Answer(answersObj.getJSONObject(2).getString("answer"), answersObj.getJSONObject(2).getBoolean("correct")))
-                            list.add(Answer(answersObj.getJSONObject(3).getString("answer"), answersObj.getJSONObject(3).getBoolean("correct")))
+                            list.add(
+                                Answer(
+                                    answersObj.getJSONObject(0).getInt("id"),
+                                    answersObj.getJSONObject(0).getString("answer"),
+                                    answersObj.getJSONObject(0).getBoolean("correct")
+                                )
+                            )
+                            list.add(
+                                Answer(
+                                    answersObj.getJSONObject(1).getInt("id"),
+                                    answersObj.getJSONObject(1).getString("answer"),
+                                    answersObj.getJSONObject(1).getBoolean("correct")
+                                )
+                            )
+                            list.add(
+                                Answer(
+                                    answersObj.getJSONObject(2).getInt("id"),
+                                    answersObj.getJSONObject(2).getString("answer"),
+                                    answersObj.getJSONObject(2).getBoolean("correct")
+                                )
+                            )
+                            list.add(
+                                Answer(
+                                    answersObj.getJSONObject(3).getInt("id"),
+                                    answersObj.getJSONObject(3).getString("answer"),
+                                    answersObj.getJSONObject(3).getBoolean("correct")
+                                )
+                            )
 
                             items.add(
                                 Question(

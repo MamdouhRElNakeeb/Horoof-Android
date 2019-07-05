@@ -3,20 +3,24 @@ package agency.crete.horoof.model
 import android.os.Parcel
 import android.os.Parcelable
 
-class Answer(content: String, status: Boolean): Parcelable {
+class Answer(id: Int, content: String, status: Boolean): Parcelable {
 
+    var id = id
     var content = content
     var status = status
 
     constructor(parcel: Parcel) : this(
+        parcel.readInt(),
         parcel.readString(),
-        false
+        parcel.readInt() == 1
     ) {
+        id = parcel.readInt()
         content = parcel.readString()
         status = parcel.readInt() == 1
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(id)
         parcel.writeString(content)
         parcel.writeInt(if (status) 1 else 0)
     }

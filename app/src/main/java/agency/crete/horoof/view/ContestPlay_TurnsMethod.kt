@@ -96,10 +96,34 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
 
                             val answersObj = obj.getJSONArray("answers")
                             val list: ArrayList<Answer> = ArrayList()
-                            list.add(Answer(answersObj.getJSONObject(0).getString("answer"), answersObj.getJSONObject(0).getBoolean("correct")))
-                            list.add(Answer(answersObj.getJSONObject(1).getString("answer"), answersObj.getJSONObject(1).getBoolean("correct")))
-                            list.add(Answer(answersObj.getJSONObject(2).getString("answer"), answersObj.getJSONObject(2).getBoolean("correct")))
-                            list.add(Answer(answersObj.getJSONObject(3).getString("answer"), answersObj.getJSONObject(3).getBoolean("correct")))
+                            list.add(
+                                Answer(
+                                    answersObj.getJSONObject(0).getInt("id"),
+                                    answersObj.getJSONObject(0).getString("answer"),
+                                    answersObj.getJSONObject(0).getBoolean("correct")
+                                )
+                            )
+                            list.add(
+                                Answer(
+                                    answersObj.getJSONObject(1).getInt("id"),
+                                    answersObj.getJSONObject(1).getString("answer"),
+                                    answersObj.getJSONObject(1).getBoolean("correct")
+                                )
+                            )
+                            list.add(
+                                Answer(
+                                    answersObj.getJSONObject(2).getInt("id"),
+                                    answersObj.getJSONObject(2).getString("answer"),
+                                    answersObj.getJSONObject(2).getBoolean("correct")
+                                )
+                            )
+                            list.add(
+                                Answer(
+                                    answersObj.getJSONObject(3).getInt("id"),
+                                    answersObj.getJSONObject(3).getString("answer"),
+                                    answersObj.getJSONObject(3).getBoolean("correct")
+                                )
+                            )
 
                             items.add(
                                 Question(
@@ -118,8 +142,6 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
                             401, 403 -> Toast.makeText(this, JSONObject(result.get()).getString("message"), Toast.LENGTH_SHORT).show()
                             404 -> Toast.makeText(this, "An error occurred, Try again later!", Toast.LENGTH_SHORT).show()
                         }
-
-//                        print("errrr: $err")
                     }
                 }
             }
@@ -128,6 +150,7 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
     private fun subscribeToCompetition(compId: Int) {
 
         stompClient!!.withClientHeartbeat(1000).withServerHeartbeat(1000)
+        stompClient!!.connect()
 
         val dispLifecycle = stompClient!!.lifecycle()
             .subscribe {
@@ -148,48 +171,47 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
 
                 }
             }
-//
+
         compositeDisposable!!.add(dispLifecycle)
-//
-        val dispTopic = stompClient!!.topic("/topic/competition/$compId/next")
-            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                    topicMessage ->
-                Log.d("Subscription", "Received " + topicMessage.payload)
-//                addItem(mGson.fromJson(topicMessage.getPayload(), EchoModel::class.java))
 
-            }, {
-                    throwable -> Log.e("Subscription", "Error on subscribe topic", throwable)
-            })
-
-        compositeDisposable.add(dispTopic)
-
-        stompClient!!.send("/topic/competition/$compId/subscription")
+        stompClient!!.send("/app/competition/$compId/subscription")
             .subscribe(
                 {
-                    Log.d("Quesss", "send to subscription")
+                    Log.d("Subscription", "send to subscription")
                 },
                 {
                         throwable -> Log.e("Subscription", "Error on subscribe topic", throwable)
                 }
             )
 
+        stompClient!!.topic("/topic/competition/$compId/questions")
+            .subscribe (
+                {
+                        topicMessage -> Log.d("Questions", topicMessage.payload)
+                }
+                ,
+                {
+                        throwable -> Log.e("Questions", "Error on subscribe topic", throwable)
+                }
+            )
 
-        stompClient!!.connect()
+        stompClient!!.topic("/topic/competition/$compId/next")
+            .subscribe({
+                    topicMessage ->
+                Log.d("Next", "Received " + topicMessage.payload)
 
-//        stompClient!!.topic("/topic/competition/$compId/questions")
-//            .subscribe (
-//                {
-//                    topicMessage -> Log.d("Quesss", topicMessage.payload)
-//                }
-//            ,
-//                {
-//                        throwable -> Log.e("Subscription", "Error on subscribe topic", throwable)
-//                }
-//            )
+            }, {
+                    throwable -> Log.e("Next", "Error on subscribe topic", throwable)
+            })
 
-//        mStompClient.send("/topic/hello-msg-mapping", "My first STOMP message!").subscribe()
+        stompClient!!.topic("/topic/competition/$compId/ended")
+            .subscribe({
+                    topicMessage ->
+                Log.d("Ended", "Received " + topicMessage.payload)
+
+            }, {
+                    throwable -> Log.e("Ended", "Error on subscribe topic", throwable)
+            })
     }
 
     private fun changeQuestion(index: Int){
@@ -206,8 +228,8 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
 
     private fun evaluateAnswers(chosenAnswer: Int) {
 
-        stompClient!!.send("/topic/competition/${compID}/question/${items.get(questionIndex).id}",
-            "{id: ${items.get(questionIndex).answers.get(chosenAnswer).content}}")
+        stompClient!!.send("/app/competition/${compID}/question/${items.get(questionIndex).id}",
+            "{id: ${items.get(questionIndex).answers.get(chosenAnswer).id}}")
 
         when {
             items[questionIndex].answers[0].status -> answer1Bg.setImageResource(R.drawable.frame_gbg)
@@ -293,5 +315,4 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
         answer3Icn.setImageResource(R.drawable.radio_btn_off)
         answer4Icn.setImageResource(R.drawable.radio_btn_off)
     }
-
 }
