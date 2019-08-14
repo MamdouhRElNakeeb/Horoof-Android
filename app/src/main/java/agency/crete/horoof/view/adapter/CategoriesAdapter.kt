@@ -38,7 +38,6 @@ class CategoriesAdapter(val items : ArrayList<Category>, val context: Context): 
             intent.putExtra("category", category.id)
             context.startActivity(intent)
         }
-
     }
 
     override fun getItemCount(): Int {

@@ -6,7 +6,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:background="@drawable/bg_default"
-		android:padding="40dp"
+		android:padding="24dp"
 		tools:context=".view.Home">
 
 	<ImageView
@@ -203,7 +203,6 @@
 
 	<ImageView
 			android:id="@+id/titleIV"
-			android:layout_alignTop="@id/horoofMethodFrame"
 			android:layout_marginStart="60dp"
 			android:layout_marginEnd="60dp"
 			android:layout_width="wrap_content"

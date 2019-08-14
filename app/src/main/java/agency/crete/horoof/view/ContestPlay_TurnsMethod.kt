@@ -5,6 +5,8 @@ import agency.crete.horoof.helper.API
 import agency.crete.horoof.helper.LocaleManager
 import agency.crete.horoof.model.Answer
 import agency.crete.horoof.model.Question
+import agency.crete.horoof.model.User
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -31,13 +33,13 @@ import ua.naiksoftware.stomp.Stomp
 class ContestPlay_TurnsMethod: AppCompatActivity() {
 
     private var stompClient: StompClient? = null
-    private val compositeDisposable: CompositeDisposable? = null
 
     var items: ArrayList<Question> = ArrayList()
 
     private var gifDrawable: GifDrawable? = null
 
     var compID = 0
+    var player2: User? = null
     var categoryID = 0
     var questionIndex = 0
 
@@ -59,6 +61,22 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
         Log.d("sockUrl", "${API.TRACKER}?access_token=$token")
         stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, "${API.TRACKER}?access_token=$token")
         joinCompetition()
+
+        answer1Btn.setOnClickListener {
+            evaluateAnswers(0)
+        }
+
+        answer2Btn.setOnClickListener {
+            evaluateAnswers(1)
+        }
+
+        answer3Btn.setOnClickListener {
+            evaluateAnswers(2)
+        }
+
+        answer4Btn.setOnClickListener {
+            evaluateAnswers(3)
+        }
     }
 
     private fun joinCompetition() {
@@ -80,17 +98,13 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
 
                         print("resp: ${result.get()}")
 
-                        if (resp.getString("status").equals("STARTED") || resp.getString("status").equals("RUNNING")) {
 
-                            compID = resp.getInt("id")
-                            Log.d("compID", compID.toString())
-
-                            subscribeToCompetition(compID)
-                        }
+                        compID = resp.getInt("id")
+                        Log.d("compID", compID.toString())
 
                         val questions = resp.getJSONArray("questions")
 
-                        for (i in 0..(questions.length() - 1)){
+                        for (i in 0 until questions.length()){
 
                             val obj = questions.getJSONObject(i).getJSONObject("question")
 
@@ -133,6 +147,20 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
                                 )
                             )
                         }
+
+                        if (resp.getString("status").equals("STARTED")) {
+                            subscribeToCompetition(compID)
+                        }
+                        else if (resp.getString("status").equals("RUNNING")){
+                            val user = resp.getJSONObject("player2")
+                            this.player2 = User(user.getInt("id"),
+                                user.getString("firstName"),
+                                user.getString("email"))
+
+//                            changeQuestion(resp.getInt("questionIndex"))
+
+                            subscribeToCompetition(compID)
+                        }
                     }
 
                     is Result.Failure -> {
@@ -147,18 +175,21 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
             }
     }
 
+    @SuppressLint("CheckResult")
     private fun subscribeToCompetition(compId: Int) {
 
         stompClient!!.withClientHeartbeat(1000).withServerHeartbeat(1000)
         stompClient!!.connect()
 
-        val dispLifecycle = stompClient!!.lifecycle()
+        stompClient!!.lifecycle()
             .subscribe {
                 lifecycle ->
 
                 when(lifecycle.type){
-                    LifecycleEvent.Type.OPENED ->
+                    LifecycleEvent.Type.OPENED -> {
                         Log.d("stompLifeCycle", "opened")
+                        connectSocket(compId)
+                    }
 
                     LifecycleEvent.Type.ERROR ->
                         Log.d("stompLifeCycle", lifecycle.exception.toString())
@@ -172,7 +203,14 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
                 }
             }
 
-        compositeDisposable!!.add(dispLifecycle)
+//        compositeDisposable!!.add(dispLifecycle)
+
+        Log.d("testaa", "/app/competition/$compId/subscription")
+
+    }
+
+    @SuppressLint("CheckResult")
+    private fun connectSocket(compId: Int) {
 
         stompClient!!.send("/app/competition/$compId/subscription")
             .subscribe(
@@ -188,6 +226,11 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
             .subscribe (
                 {
                         topicMessage -> Log.d("Questions", topicMessage.payload)
+                    this.questionIndex = JSONObject(topicMessage.payload).getInt("questionIndex")
+
+                    runOnUiThread {
+                        changeQuestion(this.questionIndex)
+                    }
                 }
                 ,
                 {
@@ -199,6 +242,12 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
             .subscribe({
                     topicMessage ->
                 Log.d("Next", "Received " + topicMessage.payload)
+
+                this.questionIndex = JSONObject(topicMessage.payload).getInt("questionIndex")
+
+                runOnUiThread {
+                    changeQuestion(this.questionIndex)
+                }
 
             }, {
                     throwable -> Log.e("Next", "Error on subscribe topic", throwable)
@@ -225,11 +274,22 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
         resetAnswers()
     }
 
-
+    @SuppressLint("CheckResult")
     private fun evaluateAnswers(chosenAnswer: Int) {
 
-        stompClient!!.send("/app/competition/${compID}/question/${items.get(questionIndex).id}",
-            "{id: ${items.get(questionIndex).answers.get(chosenAnswer).id}}")
+        Log.d("answerUrl", "/app/competition/$compID/question/${items.get(questionIndex).id}")
+        Log.d("answerObj", "{id: ${items[questionIndex].answers[chosenAnswer].id}}")
+
+        stompClient!!.send("/app/competition/$compID/question/${items.get(questionIndex).id}",
+            "{id: ${items[questionIndex].answers[chosenAnswer].id}}")
+            .subscribe(
+                {
+                    Log.d("answerSend", "send answer")
+                },
+                {
+                        throwable -> Log.e("answerSend", "Error on send answer", throwable)
+                }
+            )
 
         when {
             items[questionIndex].answers[0].status -> answer1Bg.setImageResource(R.drawable.frame_gbg)
@@ -240,7 +300,7 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
 
         when(chosenAnswer){
 
-            1 -> {
+            0 -> {
                 if (!items[questionIndex].answers[0].status) {
                     answer1Bg.setImageResource(R.drawable.frame_rbg)
                     resultMsgTV.setText(R.string.wrong_answer)
@@ -255,7 +315,7 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
                 answer1Icn.setImageResource(R.drawable.radio_btn_on)
             }
 
-            2 -> {
+            1 -> {
                 if (!items[questionIndex].answers[1].status){
                     answer2Bg.setImageResource(R.drawable.frame_rbg)
                     resultMsgTV.setText(R.string.wrong_answer)
@@ -270,7 +330,7 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
                 answer2Icn.setImageResource(R.drawable.radio_btn_on)
             }
 
-            3 -> {
+            2 -> {
                 if (!items[questionIndex].answers[2].status){
                     answer3Bg.setImageResource(R.drawable.frame_rbg)
                     resultMsgTV.setText(R.string.wrong_answer)
@@ -285,7 +345,7 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
                 answer3Icn.setImageResource(R.drawable.radio_btn_on)
             }
 
-            4 -> {
+            3 -> {
                 if (!items[questionIndex].answers[3].status){
                     answer4Bg.setImageResource(R.drawable.frame_rbg)
                     resultMsgTV.setText(R.string.wrong_answer)
@@ -314,5 +374,10 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
         answer2Icn.setImageResource(R.drawable.radio_btn_off)
         answer3Icn.setImageResource(R.drawable.radio_btn_off)
         answer4Icn.setImageResource(R.drawable.radio_btn_off)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stompClient!!.disconnect()
     }
 }
