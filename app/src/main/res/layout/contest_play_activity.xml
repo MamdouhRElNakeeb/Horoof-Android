@@ -12,11 +12,57 @@
 			android:layout_height="match_parent"
 			android:orientation="vertical">
 
+
+		<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="0.2"
+				android:orientation="horizontal"
+				android:gravity="center">
+
+			<TextView
+					android:id="@+id/player1NameTV"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:typeface="monospace"
+					android:textSize="15sp"
+					android:textColor="@android:color/white"
+					android:text="Player1: "/>
+
+			<TextView
+					android:id="@+id/player1ScoreTV"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginEnd="24dp"
+					android:typeface="monospace"
+					android:textSize="15sp"
+					android:text="0"/>
+
+			<TextView
+					android:id="@+id/player2NameTV"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginStart="24dp"
+					android:typeface="monospace"
+					android:textSize="15sp"
+					android:textColor="@android:color/white"
+					android:text="Player2: "/>
+
+			<TextView
+					android:id="@+id/player2ScoreTV"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:typeface="monospace"
+					android:textSize="15sp"
+					android:text="0"/>
+
+		</LinearLayout>
+
 		<RelativeLayout
 				android:layout_width="match_parent"
 				android:layout_height="0dp"
 				android:layout_weight="1"
-				android:layout_marginTop="40dp"
+				android:layout_marginTop="16dp"
 				android:layout_marginStart="40dp"
 				android:layout_marginEnd="40dp">
 
@@ -90,7 +136,7 @@
 				android:layout_height="0dp"
 				android:layout_marginEnd="60dp"
 				android:layout_marginStart="60dp"
-				android:paddingBottom="30dp"
+				android:paddingBottom="16dp"
 				android:orientation="vertical">
 
 			<RelativeLayout

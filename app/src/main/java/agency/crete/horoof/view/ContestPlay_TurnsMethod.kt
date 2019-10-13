@@ -39,6 +39,7 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
     private var gifDrawable: GifDrawable? = null
 
     var compID = 0
+    var player1: User? = null
     var player2: User? = null
     var categoryID = 0
     var questionIndex = 0
@@ -149,13 +150,28 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
                         }
 
                         if (resp.getString("status").equals("STARTED")) {
+                            val user = resp.getJSONObject("player1")
+                            this.player1 = User(user.getInt("id"),
+                                user.getString("firstName"),
+                                user.getString("email"))
+
+//                            player1NameTV.text = this.player1!!.name
                             subscribeToCompetition(compID)
                         }
                         else if (resp.getString("status").equals("RUNNING")){
-                            val user = resp.getJSONObject("player2")
-                            this.player2 = User(user.getInt("id"),
-                                user.getString("firstName"),
-                                user.getString("email"))
+
+                            val user1 = resp.getJSONObject("player2")
+                            this.player1 = User(user1.getInt("id"),
+                                user1.getString("firstName"),
+                                user1.getString("email"))
+
+                            val user2 = resp.getJSONObject("player1")
+                            this.player2 = User(user2.getInt("id"),
+                                user2.getString("firstName"),
+                                user2.getString("email"))
+
+//                            player1NameTV.text = this.player1!!.name
+//                            player2NameTV.text = this.player2!!.name
 
 //                            changeQuestion(resp.getInt("questionIndex"))
 
@@ -226,10 +242,29 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
             .subscribe (
                 {
                         topicMessage -> Log.d("Questions", topicMessage.payload)
-                    this.questionIndex = JSONObject(topicMessage.payload).getInt("questionIndex")
 
-                    runOnUiThread {
-                        changeQuestion(this.questionIndex)
+                    val jsonObj = JSONObject(topicMessage.payload)
+
+                    if (jsonObj.getString("status") == "RUNNING"){
+
+                        val user = jsonObj.getJSONObject("player2")
+
+                        if (player2 == null) {
+                            this.player2 = User(
+                                user.getInt("id"),
+                                user.getString("firstName"),
+                                user.getString("email")
+                            )
+
+//                            player2NameTV.text = this.player2!!.name
+                        }
+
+                        this.questionIndex = jsonObj.getInt("questionIndex")
+
+
+                        runOnUiThread {
+                            changeQuestion(this.questionIndex)
+                        }
                     }
                 }
                 ,
@@ -243,10 +278,28 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
                     topicMessage ->
                 Log.d("Next", "Received " + topicMessage.payload)
 
-                this.questionIndex = JSONObject(topicMessage.payload).getInt("questionIndex")
+                val jsonObj = JSONObject(topicMessage.payload)
 
-                runOnUiThread {
-                    changeQuestion(this.questionIndex)
+                if (jsonObj.getString("status") == "RUNNING"){
+
+                    val user = jsonObj.getJSONObject("player2")
+
+                    if (player2 == null) {
+                        this.player2 = User(
+                            user.getInt("id"),
+                            user.getString("firstName"),
+                            user.getString("email")
+                        )
+
+//                        player2NameTV.text = this.player2!!.name
+                    }
+
+                    this.questionIndex = jsonObj.getInt("questionIndex")
+
+
+                    runOnUiThread {
+                        changeQuestion(this.questionIndex)
+                    }
                 }
 
             }, {
@@ -280,8 +333,8 @@ class ContestPlay_TurnsMethod: AppCompatActivity() {
         Log.d("answerUrl", "/app/competition/$compID/question/${items.get(questionIndex).id}")
         Log.d("answerObj", "{id: ${items[questionIndex].answers[chosenAnswer].id}}")
 
-        stompClient!!.send("/app/competition/$compID/question/${items.get(questionIndex).id}",
-            "{id: ${items[questionIndex].answers[chosenAnswer].id}}")
+        stompClient!!
+            .send("/app/competition/$compID/question/${items.get(questionIndex).id}/answer/${items[questionIndex].answers[chosenAnswer].id}/${player1!!.id}")
             .subscribe(
                 {
                     Log.d("answerSend", "send answer")
